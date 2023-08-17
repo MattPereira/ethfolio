@@ -1,6 +1,5 @@
 //prettier-ignore
-import { Box, Button, Center, Flex, Heading, Image, Input, SimpleGrid, Text, Spinner, FormControl, InputGroup, InputRightElement, IconButton } from "@chakra-ui/react";
-import { ethers } from "ethers";
+import { Box, Button, Center, Flex, Heading, Input, Text, Spinner, FormControl, InputGroup, InputRightElement, IconButton } from "@chakra-ui/react";
 import axios from "axios";
 
 import { SearchIcon } from "@chakra-ui/icons";
@@ -9,20 +8,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
 import AssetsDisplay from "./AssetsDisplay";
 
-function shortenAddress(address) {
-  if (!address) return "";
-
-  const start = address.slice(0, 5); // gets the first 5 characters
-  const end = address.slice(-3); // gets the last 3 characters
-
-  return `${start}...${end}`;
-}
-
 export default function App() {
+  const [accountData, setAccountData] = useState([]);
   const [userAddress, setUserAddress] = useState("");
   const [hasQueried, setHasQueried] = useState(false);
-  const [accountData, setAccountData] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -32,7 +21,6 @@ export default function App() {
         method: "eth_requestAccounts",
       });
       setUserAddress(accounts[0]);
-      setIsConnected(true);
       return accounts[0];
     } catch (err) {
       console.log("error", err);
@@ -79,11 +67,7 @@ export default function App() {
       >
         <Text>Connect browser wallet or search by address or ens name</Text>
         {window.ethereum && window.ethereum.selectedAddress ? (
-          <Text>
-            {window.ethereum.selectedAddress.slice(0, 5) +
-              "..." +
-              window.ethereum.selectedAddress.slice(-4)}
-          </Text>
+          <Text>{shortenAddress(window.ethereum.selectedAddress)}</Text>
         ) : (
           <Button
             variant="outline"
@@ -195,4 +179,13 @@ export default function App() {
       )}
     </ChakraProvider>
   );
+}
+
+function shortenAddress(address) {
+  if (!address) return "";
+
+  const start = address.slice(0, 5);
+  const end = address.slice(-3);
+
+  return `${start}...${end}`;
 }

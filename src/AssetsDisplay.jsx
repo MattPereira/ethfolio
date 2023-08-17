@@ -1,22 +1,5 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Image,
-  SimpleGrid,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  Container,
-  Skeleton,
-} from "@chakra-ui/react";
+// prettier-ignore
+import { Box, Flex, Heading, Image, SimpleGrid, Text, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Skeleton } from "@chakra-ui/react";
 import { Utils } from "alchemy-sdk";
 import { useState } from "react";
 
@@ -140,8 +123,8 @@ function ImageWithFallback(props) {
 
   return (
     <Image
-      width="100%" // this ensures the image takes the full width of its parent but no more
-      maxW={width} // this ensures the maximum width is the specified width value
+      width="100%"
+      maxW={width}
       borderRadius={18}
       src={imageUrl}
       onError={handleError}
