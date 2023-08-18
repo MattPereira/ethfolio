@@ -9,6 +9,18 @@ const customColors = {
 };
 
 const theme = extendTheme({
+  styles: {
+    global: {
+      td: {
+        fontSize: "20px !important",
+      },
+      th: {
+        fontSize: "20px !important",
+        fontWeight: "normal !important",
+        paddingBottom: "10px !important",
+      },
+    },
+  },
   colors: customColors,
   fonts: {
     body: "didact gothic",

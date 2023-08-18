@@ -6,36 +6,42 @@ const config = {
 };
 const alchemy = new Alchemy(config);
 
+console.log("Network", Network);
+
 export default async function handler(request, response) {
   try {
     const { address } = request.query;
-
-    const data = await alchemy.core.getTokenBalances(address);
-
+    const { tokenBalances } = await alchemy.core.getTokenBalances(address);
     const tokenMetadataPromises = [];
 
-    for (let i = 0; i < data.tokenBalances.length; i++) {
+    // remove tokens with 0 balance
+    const filteredTokenBalances = tokenBalances.filter(
+      (token) => BigInt(token.tokenBalance) !== 0n
+    );
+
+    filteredTokenBalances.forEach((token) => {
       const tokenMetadataPromise = alchemy.core.getTokenMetadata(
-        data.tokenBalances[i].contractAddress
+        token.contractAddress
       );
       tokenMetadataPromises.push(tokenMetadataPromise);
-    }
+    });
 
     const tokenMetadata = await Promise.all(tokenMetadataPromises);
-
-    const tokenData = data.tokenBalances.map((token, idx) => {
+    const tokenData = filteredTokenBalances.map((tokenBalance, idx) => {
       return {
-        ...token,
+        ...tokenBalance,
         ...tokenMetadata[idx],
       };
     });
 
-    const nftData = await alchemy.nft.getNftsForOwner(address);
+    const { ownedNfts } = await alchemy.nft.getNftsForOwner(address);
+
+    const nftData = ownedNfts.filter((nft) => !nft.metadataError);
 
     const account = {
-      address: data.address,
+      address,
       tokenData,
-      nftData: nftData.ownedNfts,
+      nftData,
     };
 
     response.status(200).json(account);

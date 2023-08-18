@@ -6,7 +6,11 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
-import AssetsDisplay from "./AssetsDisplay";
+import { shortenAddress } from "./utils/helpers";
+
+import TokenDisplay from "./components/TokenDisplay";
+import LoadingSpinner from "./components/LoadingSpinner";
+import NftDisplay from "./components/NftDisplay";
 
 export default function App() {
   const [accountData, setAccountData] = useState([]);
@@ -53,6 +57,8 @@ export default function App() {
       setError(error.response.data.error.reason);
     }
   }
+
+  const { tokenData, nftData } = accountData;
 
   return (
     <ChakraProvider theme={theme}>
@@ -155,37 +161,25 @@ export default function App() {
         )}
       </Box>
       {isLoading ? (
-        <Flex
-          w="100%"
-          h={72}
-          flexDirection="column"
-          alignItems="center"
-          justifyContent={"center"}
-        >
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
+        <LoadingSpinner />
       ) : (
-        <AssetsDisplay
-          hasQueried={hasQueried}
-          accountData={accountData}
-          error={error}
-        />
+        <Box p={10}>
+          {hasQueried && nftData ? (
+            <>
+              <TokenDisplay tokenData={tokenData} />
+              <NftDisplay nftData={nftData} />
+            </>
+          ) : (
+            <Box mt={24}>
+              <Text textAlign="center">
+                {error
+                  ? error + ". Please enter a valid address or ens name"
+                  : "All ERC-20 token balances and NFTs for a given account address will display here!"}
+              </Text>
+            </Box>
+          )}
+        </Box>
       )}
     </ChakraProvider>
   );
-}
-
-function shortenAddress(address) {
-  if (!address) return "";
-
-  const start = address.slice(0, 5);
-  const end = address.slice(-3);
-
-  return `${start}...${end}`;
 }
