@@ -155,9 +155,20 @@ export default function App() {
           </form>
         </Flex>
         {hasQueried && (
-          <Text fontWeight="bold" mt={20} textAlign="center" fontSize={22}>
-            Address: {accountData.address}
-          </Text>
+          <Box display="flex" justifyContent="center">
+            <Text
+              fontWeight="bold"
+              mt={20}
+              fontSize={22}
+              bgColor="white"
+              color="swell.900"
+              w="max-content"
+              p={2}
+              borderRadius={10}
+            >
+              {accountData.address}
+            </Text>
+          </Box>
         )}
       </Box>
       {isLoading ? (
